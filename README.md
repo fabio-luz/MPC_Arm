@@ -1,7 +1,11 @@
 # MPC_Arm
 
-The utilization of robots can be very beneficial for elderly and disabled people's assistance as they can help them to regain autonomy to perform activities of daily living otherwise unachievable. In recent years, many studies have been made on Assistive Robotic Manipulators. However, a fully autonomous system that can adapt in real-time to the users' behavior and the surrounding environment is still yet to be accomplished. 
+An MPC algorithm was developed using acados MATLAB interface for a 6-DOF robotic arm, using a first-order model to represent it. 
 
-To work towards this goal, in this thesis we aim to go beyond standard control techniques and use the Model Predictive Control method for robotic manipulation, more specifically for a six-degrees of freedom robotic manipulator that is used for assistive purposes. MPC does not require any user's control input, allows the handle of nonlinear constraints, and opens the door for the integration of machine learning and artificial intelligence techniques, contributing to a more autonomous assistance. The results show the ability to reach the reference position, even if it is variable through time, and to react immediately to perturbations, adapting the trajectory of the end-effector.
+## How to use
 
-# How to use
+1. Install the acados' MATLAB interface from https://github.com/acados/acados;
+2. Change the variables *example_dir*, *acados_dir*, *casadi_dir*, *matlab_interface_dir*, and *mex_template_dir* to meet the path directories of your installation;
+3. Run the program.
+
+If you want to use the algorithm for any other manipulator, it is required to change the *forward_kinematics.m* to meet the structure of your arm and change the parameters or use a more complete model.
