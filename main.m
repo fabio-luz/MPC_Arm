@@ -7,11 +7,11 @@ check_acados_requirements();
 T = 0.5; % Time of each OCP
 N = 10; % Shooting nodes of each OPC
 dt = T/N; % Time of each sample in each OCP
-Tf = 10.00; % Final time
+Tf = 3.00; % Final time
 Nsim = round(Tf/dt); % Discretization of the simulation
 %% Model and inputs
 [model, A, B] = arm_model;
-[x0, y_ref] = input_gen(Nsim, 3);
+[x0, y_ref, simX_no, simXdot_no] = input_gen(Nsim, 1);
 
 %% Simulation
 [ocp_model, ocp_opts] = ocp_build(T, N, model, x0, y_ref(:,1));
@@ -25,27 +25,26 @@ dist = zeros(Nsim+1,1);
 
 for i = 1:(Nsim+1)
     % OCP - find best control option, u
-    ocp.solve();
+    ocp.solve(); 
     curr_x = ocp.get('x', 0); curr_u = ocp.get('u', 0);
-    simX(i,:) = curr_x';      simU(i,:) = curr_u';
+    simX(i,:) = curr_x';       simU(i,:) = curr_u';
     
     % Find new state/position, obtained by u
     simXdot(i,:) = (A*curr_x + B*curr_u); 
     x_pre = curr_x + dt*simXdot(i,:)'; 
+    % Add noise
     [pos_x, pos_y, pos_z] = forward_kinematics(x_pre);
     pos = [pos_x; pos_y; pos_z];
-    % Add noise 
     dist(i) = norm(y_ref(:,i) - pos);
-    % if dist(i) > 1
-    %     x = noise(x_pre);
-    % else
+    if dist(i) > 1
+        x = noise(x_pre);
+    else
         x = x_pre;
-    % end
+    end
     % update x0/y_ref with the new one
     ocp.set('constr_x0', x); 
     ocp.set('cost_y_ref', [y_ref(:,i); 0; 0; 0; 0; 0; 0]);
-    % ocp.set('cost_y_ref', [y_ref(:,i); 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0]); 
     ocp.set('cost_y_ref_e', y_ref(:,i)); 
 end 
 %% Plots
-mpc_plot(simX,simU,simXdot,Nsim,dt,Tf,y_ref);
+mpc_plot(simX,simU,simXdot,simX_no,simXdot_no,Nsim,dt,Tf,y_ref);
