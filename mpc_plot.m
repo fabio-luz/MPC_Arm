@@ -41,18 +41,43 @@ for i=1:length(coord)
 end
 sgtitle('Position of the end-effector');
 
+% myVideo = VideoWriter('example3'); %open video file
+% myVideo.FrameRate = 4;  %can adjust this, 5 - 10 works well for me
+% myVideo.Quality = 100;
+% open(myVideo)
 figure; view(3); grid on; hold on
-axis equal;
-p = plot3(pos_x,pos_y,pos_z, '-o');
-plot3(pos_x(1), pos_y(1), pos_z(1), '.', 'Color', 'r','MarkerSize', 40);
-plot3(pos_x(end), pos_y(end), pos_z(end), '.', 'Color', 'b', 'MarkerSize', 40);
-plot3(yref(1,:),yref(2,:),yref(3,:),'x', 'Color', 'k', 'MarkerSize', 20, 'LineWidth', 2);
-title('Position of the end-effector');
+axis equal; title('Position of the end-effector');
+p = plot3(pos_x(1), pos_y(1), pos_z(1), '.', 'Color', 'r','MarkerSize', 40);
 datatip(p, pos_x(1), pos_y(1), pos_z(1));
-datatip(p, pos_x(end), pos_y(end), pos_z(end));
-plot3(pos_x_no, pos_y_no, pos_z_no, '--*', 'Color', [0.8500 0.3250 0.0980]);
-legend('Trajectory (noise)', 'Initial Position', 'End Position', ...
-    'Reference', 'Trajectory (no noise)');
+plot3(yref(1,:),yref(2,:),yref(3,:),'-.', 'Color', 'k', 'MarkerSize', 20, 'LineWidth', 2);
+plot3(pos_x(end), pos_y(end), pos_z(end), '.', 'Color', 'b', 'MarkerSize', 40);
+% datatip(p, pos_x(end), pos_y(end), pos_z(end)); drawnow;
+for i=1:length(pos_x)
+    plot3(pos_x(i),pos_y(i),pos_z(i), '-o', 'Color', [0 0.4470 0.7410]);
+    plot3(pos_x_no(i), pos_y_no(i), pos_z_no(i), '--*','Color', [0.8500 0.3250 0.0980]);
+    % drawnow;
+    % pause(dt*5);
+%     frame = getframe(gcf); %get frame
+%     writeVideo(myVideo, frame);
+end
+
+legend('Initial Position', 'Reference', 'End Position', ...
+        'Trajectory (noise)', 'Trajectory (no noise)', 'AutoUpdate', 'off');
+plot3(pos_x,pos_y,pos_z, '-o', 'Color', [0 0.4470 0.7410]);
+plot3(pos_x_no, pos_y_no, pos_z_no, '--*','Color', [0.8500 0.3250 0.0980]);
+drawnow;
+% frame = getframe(gcf); %get frame
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% writeVideo(myVideo, frame);
+% close(myVideo)
 
 %% Figure 3 - Control signal
 figure; 

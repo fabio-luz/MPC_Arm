@@ -7,11 +7,11 @@ check_acados_requirements();
 T = 0.5; % Time of each OCP
 N = 10; % Shooting nodes of each OPC
 dt = T/N; % Time of each sample in each OCP
-Tf = 3.00; % Final time
+Tf = 10; % Final time
 Nsim = round(Tf/dt); % Discretization of the simulation
 %% Model and inputs
 [model, A, B] = arm_model;
-[x0, y_ref, simX_no, simXdot_no] = input_gen(Nsim, 1);
+[x0, y_ref, simX_no, simXdot_no] = input_gen(Nsim, 4);
 
 %% Simulation
 [ocp_model, ocp_opts] = ocp_build(T, N, model, x0, y_ref(:,1));
@@ -22,8 +22,10 @@ ocp.set('init_pi', zeros(model.nx, N));
 simX = zeros(Nsim+1, model.nx); simU = zeros(Nsim+1, model.nu);
 simXdot = zeros(Nsim+1, model.nx);
 dist = zeros(Nsim+1,1);
+t = zeros(1, Nsim+1);
 
 for i = 1:(Nsim+1)
+    tic
     % OCP - find best control option, u
     ocp.solve(); 
     curr_x = ocp.get('x', 0); curr_u = ocp.get('u', 0);
@@ -45,6 +47,15 @@ for i = 1:(Nsim+1)
     ocp.set('constr_x0', x); 
     ocp.set('cost_y_ref', [y_ref(:,i); 0; 0; 0; 0; 0; 0]);
     ocp.set('cost_y_ref_e', y_ref(:,i)); 
+    t(i) = toc;
 end 
+% figure; grid on; 
+% plot(1:(Nsim+1),t, '-'); hold on; 
+% dt_plot = dt + zeros(1,Nsim+1);
+% plot(1:(Nsim+1), dt_plot);
+% title('Computacional cost');
+% xlabel('Iterations'); ylabel('Time [s]'); xlim([0 Nsim]);
+% legend('OPC solve time','Sample Time');
+
 %% Plots
 mpc_plot(simX,simU,simXdot,simX_no,simXdot_no,Nsim,dt,Tf,y_ref);
